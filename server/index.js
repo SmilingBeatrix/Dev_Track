@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import projectRoutes from "./routes/projects.js";
 import taskRoutes from "./routes/tasks.js";
 import dashboardRoutes from "./routes/dashboard.js";
+import path from "path";
 
 dotenv.config();
 
@@ -24,10 +25,17 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", app: "DevTrack API" });
 });
 
+const _dirname = path.resolve();
+
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use(express.static(path.join(_dirname , "/client/dist")))
+app.get('*' , (_ , res) => {
+  res.sendFile(path.resolve(_dirname , "client" , "dist" , "index.html"));
+})
 
 app.use((err, _req, res, _next) => {
   console.error(err);
@@ -54,3 +62,7 @@ mongoose
     console.error("MongoDB connection failed:", err.message);
     process.exit(1);
   });
+
+
+
+  
